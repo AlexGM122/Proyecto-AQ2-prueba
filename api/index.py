@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
+from datetime import datetime, timezone, timedelta
 
 # La inicialización de la app de Flask debe ocurrir antes de la conexión a DB.
 app = Flask(__name__)
@@ -61,9 +62,14 @@ def ingestar_temperatura():
         return jsonify({"error": f"Valor de temperatura inválido: {temperatura_str}"}), 400
 
     # 3. Preparar Documento
+    
+    # Definimos el desfase de +1 hora
+   
+    tz_utc_plus_1 = timezone(timedelta(hours=1))
+    
     registro = {
         "temperatura": temperatura_float,
-        "timestamp": datetime.now(timezone.utc),
+        "timestamp": datetime.now(tz_utc_plus_1),
         "device_ip": request.remote_addr # IP pública del dispositivo/red
     }
 
